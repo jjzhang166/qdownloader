@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QDir>
 #include "downloader.h"
 #include "kutil/singleton.h"
 
