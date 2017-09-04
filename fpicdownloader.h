@@ -30,7 +30,7 @@ namespace qdownloader
 
 	public:
 		void setParams(const QString& default_save_path, const QString& title,
-			const QStringList& pics, const QString& url_referer);
+			const QStringList& pics);
 		void hideControls();
 		void startDownload();
 
@@ -67,7 +67,7 @@ namespace qdownloader
 
 	public:
 		FPicDownloader* download(const QString&url, const QString& title,
-			const QStringList& pics, const QString& url_referer);
+			const QStringList& pics);
 		void setLastSavePath(const QString& path) {
 			last_save_path_ = path;
 		}

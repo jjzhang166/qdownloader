@@ -50,10 +50,8 @@ namespace qdownloader
 	}
 
 	void FPicDownloader::setParams(const QString& default_save_path,
-		const QString& title, const QStringList& pics, const QString& url_referer)
+		const QString& title, const QStringList& pics)
 	{
-		downloader_.setReferer(url_referer);
-
 		// 设置默认的存储位置
 		ui->path_->setPathMode(QPathEdit::ExistingFolder);
 		ui->path_->setPath(default_save_path);
@@ -119,7 +117,7 @@ namespace qdownloader
 	}
 
 	FPicDownloader* KPictureDownloaderMan::download(const QString&url, const QString& title,
-		const QStringList& pics, const QString& url_referer)
+		const QStringList& pics)
 	{
 		if (FPicDownloader* p = workers_.value(url)) {
 			p->raise();
@@ -127,7 +125,7 @@ namespace qdownloader
 		}
 		else {
 			p = new FPicDownloader(nullptr);
-			p->setParams(last_save_path_, title, pics, url_referer);
+			p->setParams(last_save_path_, title, pics);
 			p->setAttribute(Qt::WA_DeleteOnClose);
 			p->show();
 			workers_.insert(url, p);

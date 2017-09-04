@@ -51,29 +51,29 @@ namespace qdownloader
 		started_ = false;
 	}
 
-	void Downloader::onDownload(int evt, QUrl url, int progress, QNetworkReply::NetworkError)
+	void Downloader::onDownload(int evt, QUrl url, int progress, QNetworkReply::NetworkError err)
 	{
 		bool download_next = true;
-		QString err;
+		QString s_error;
 		switch (evt)
 		{
 		case net::HttpDownload_Event_Finished:
-			err = QStringLiteral("已完成");
+			s_error = QStringLiteral("已完成");
 			done_++;
 			break;
 
 		case net::HttpDownload_Event_Error:
-			err = QStringLiteral("错误：%1").arg(err);
+			s_error = QStringLiteral("错误：%1").arg(err);
 			done_++;
 			break;
 
 		case net::HttpDownload_Event_Progress:
 			download_next = false;
-			err = QStringLiteral("%1%").arg(progress);
+			s_error = QStringLiteral("%1%").arg(progress);
 			break;
 		}
 
-		emit downloadEvent(evt, url, progress, err);
+		emit downloadEvent(evt, url, progress, s_error);
 		if (download_next) {
 			// 当前已下载完成的
 			emit finished(done_);
@@ -85,7 +85,7 @@ namespace qdownloader
 		}
 	}
 
-	void Downloader::download(const QString& surl)
+	QString Downloader::download(const QString& surl)
 	{
 		QUrl url(surl);
 		QString save_file = save_dir_ + "/" + kutil::url2Filename(surl);
@@ -94,15 +94,15 @@ namespace qdownloader
 			onDownload(net::HttpDownload_Event_Finished, url, 100, QNetworkReply::NoError);
 		}
 		else {
-			QString referer = referer_.isEmpty() ? url.host() : referer_;
 			const QHash<QString, QString> headers = {
 				{ "User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36" },
 				{ "accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" },
-				{ "Referer", referer }
+				{ "Referer", url.host() }
 			};
 			net::KHttpDownload(url, save_file, this,
 				SLOT(onDownload(int, QUrl, int, QNetworkReply::NetworkError)), headers);
 		}
+		return save_file;
 	}
 
 }

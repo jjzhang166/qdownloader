@@ -14,11 +14,6 @@ namespace qdownloader
 		Downloader(QObject *parent = nullptr);
 		~Downloader();
 
-		// 用于文件下载防盗链
-		void setReferer(const QString& refer) {
-			referer_ = refer;
-		}
-
 		void setParalledDownload(int n) {
 			parell_download_ = n;
 		}
@@ -41,7 +36,7 @@ namespace qdownloader
 		}
 
 	protected:
-		void download(const QString& url);
+		QString download(const QString& url);
 
 	signals:
 		void downloadEvent(int evt, QUrl, int progress, QString error);
@@ -55,8 +50,6 @@ namespace qdownloader
 		QString save_dir_;
 		// 所有需要下载的连接
 		QStringList items_;
-		// 文件防盗链
-		QString referer_;
 
 		// 当前最后一个下载的位置
 		int idx_ = 0;
