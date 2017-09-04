@@ -3,64 +3,69 @@
 #include <QObject>
 #include <QNetworkReply>
 
-class Downloader : public QObject
+namespace qdownloader 
 {
-    Q_OBJECT
 
-public:
-    Downloader(QObject *parent = nullptr);
-    ~Downloader();
+	class Downloader : public QObject
+	{
+		Q_OBJECT
 
-    // 用于文件下载防盗链
-    void setReferer(const QString& refer){
-        referer_ = refer;
-    }
+	public:
+		Downloader(QObject *parent = nullptr);
+		~Downloader();
 
-    void setParalledDownload(int n){
-        parell_download_ = n;
-    }
+		// 用于文件下载防盗链
+		void setReferer(const QString& refer) {
+			referer_ = refer;
+		}
 
-    void setDownloadPath(const QString& path){
-        save_dir_ = path;
-    }
+		void setParalledDownload(int n) {
+			parell_download_ = n;
+		}
 
-    const QStringList& setItems(const QStringList& items);
+		void setDownloadPath(const QString& path) {
+			save_dir_ = path;
+		}
 
-    int index(const QString& url)const{
-        return items_.indexOf(url);
-    }
+		const QStringList& setItems(const QStringList& items);
 
-    void start();
-    void stop();
+		int index(const QString& url)const {
+			return items_.indexOf(url);
+		}
 
-    bool isAllDone()const{
-        return done_ >= items_.count();
-    }
+		void start();
+		void stop();
 
-protected:
-    void download(const QString& url);
+		bool isAllDone()const {
+			return done_ >= items_.count();
+		}
 
-signals:
-    void downloadEvent(int evt, QUrl, int progress, QString error);
-    void finished(int);
+	protected:
+		void download(const QString& url);
 
-protected slots:
-    void onDownload(int evt, QUrl, int progress, QNetworkReply::NetworkError);
+	signals:
+		void downloadEvent(int evt, QUrl, int progress, QString error);
+		void finished(int);
 
-private:
-    // 保存到的路径
-    QString save_dir_;
-    // 所有需要下载的连接
-    QStringList items_;
-    // 文件防盗链
-    QString referer_;
+		protected slots:
+		void onDownload(int evt, QUrl, int progress, QNetworkReply::NetworkError);
 
-    // 当前最后一个下载的位置
-    int idx_ = 0;
-    // 当前已确定下载完成/下载错误的图片数量
-    int done_ = 0;
-    // 同时下载的个数
-    int parell_download_ = 5;
+	private:
+		// 保存到的路径
+		QString save_dir_;
+		// 所有需要下载的连接
+		QStringList items_;
+		// 文件防盗链
+		QString referer_;
 
-    bool started_ = false;
-};
+		// 当前最后一个下载的位置
+		int idx_ = 0;
+		// 当前已确定下载完成/下载错误的图片数量
+		int done_ = 0;
+		// 同时下载的个数
+		int parell_download_ = 5;
+
+		bool started_ = false;
+	};
+
+}

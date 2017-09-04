@@ -9,76 +9,81 @@ namespace Ui {
     class FPicDownloader;
 }
 
-class KPictureDownloaderMan;
-class FPicDownloader : public QWidget
+namespace qdownloader 
 {
-    Q_OBJECT
 
-    friend class KPictureDownloaderMan;
+	class KPictureDownloaderMan;
+	class FPicDownloader : public QWidget
+	{
+		Q_OBJECT
 
-private:
-    FPicDownloader(QWidget* parent);
+			friend class KPictureDownloaderMan;
 
-    ~FPicDownloader();
-    int urlRow(const QString& url)const;
-    void downloadUrl(const QString& url)const;
+	private:
+		FPicDownloader(QWidget* parent);
 
-    virtual void closeEvent(QCloseEvent *event) override;
+		~FPicDownloader();
+		int urlRow(const QString& url)const;
+		void downloadUrl(const QString& url)const;
 
-public:
-    void setParams(const QString& default_save_path, const QString& title, 
-        const QStringList& pics, const QString& url_referer);
-    void hideControls();
-    void startDownload();
+		virtual void closeEvent(QCloseEvent *event) override;
 
-protected slots:
-    void on_btn_go__clicked();
-    void onDownloadPicture(int evt, QUrl url, int progress, QString err);
-    void on_path__pathChanged(QString path);
+	public:
+		void setParams(const QString& default_save_path, const QString& title,
+			const QStringList& pics, const QString& url_referer);
+		void hideControls();
+		void startDownload();
 
-signals:
-    void closing(FPicDownloader*);
-    // 图片下载了多少个了
-    void allDone( );
+		protected slots:
+		void on_btn_go__clicked();
+		void onDownloadPicture(int evt, QUrl url, int progress, QString err);
+		void on_path__pathChanged(QString path);
 
-private:
-    Ui::FPicDownloader* ui = nullptr;
-    Downloader downloader_;
-};
+	signals:
+		void closing(FPicDownloader*);
+		// 图片下载了多少个了
+		void allDone();
 
-class KPictureDownloaderMan : public SingletonWithBase<KPictureDownloaderMan, QObject>
-{
-    Q_OBJECT
+	private:
+		Ui::FPicDownloader* ui = nullptr;
+		Downloader downloader_;
+	};
 
-    friend class SingletonWithBase<KPictureDownloaderMan, QObject>;
+	class KPictureDownloaderMan : public SingletonWithBase<KPictureDownloaderMan, QObject>
+	{
+		Q_OBJECT
 
-private:
-    KPictureDownloaderMan()
-        :SingletonWithBase<KPictureDownloaderMan, QObject>(nullptr){
-        last_save_path_ = QDir::currentPath() + "/pictures/";
-        QDir().mkdir(last_save_path_);
-    }
-    ~KPictureDownloaderMan(){
+			friend class SingletonWithBase<KPictureDownloaderMan, QObject>;
 
-    }
+	private:
+		KPictureDownloaderMan()
+			:SingletonWithBase<KPictureDownloaderMan, QObject>(nullptr) {
+			last_save_path_ = QDir::currentPath() + "/pictures/";
+			QDir().mkdir(last_save_path_);
+		}
+		~KPictureDownloaderMan() {
 
-public:
-    FPicDownloader* download(const QString&url, const QString& title, 
-        const QStringList& pics, const QString& url_referer);
-    void setLastSavePath(const QString& path){
-        last_save_path_ = path;
-    }
+		}
 
-    inline QString lastSavePath()const{
-        return last_save_path_;
-    }
+	public:
+		FPicDownloader* download(const QString&url, const QString& title,
+			const QStringList& pics, const QString& url_referer);
+		void setLastSavePath(const QString& path) {
+			last_save_path_ = path;
+		}
 
-public slots:
-void onDlgClosing(FPicDownloader* p);
+		inline QString lastSavePath()const {
+			return last_save_path_;
+		}
 
-private:
-    QHash<QString, FPicDownloader*> workers_;
-    // 图片的保存位置
-    QString last_save_path_;
-};
+		public slots:
+		void onDlgClosing(FPicDownloader* p);
 
+	private:
+		QHash<QString, FPicDownloader*> workers_;
+		// 图片的保存位置
+		QString last_save_path_;
+	};
+
+
+}
